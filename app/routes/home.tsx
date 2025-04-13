@@ -44,7 +44,7 @@ export default function Home() {
             <p className="font-medium text-lg mb-6 text-gray-700 dark:text-gray-200 break-words">{videoInfo.title}</p>
             <div className="flex gap-4 justify-end">
               <button
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium"
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium cursor-pointer"
                 onClick={() => {
                   if (pendingVideo) {
                     setLinks([...links, pendingVideo]);
@@ -59,7 +59,7 @@ export default function Home() {
                 Confirmar
               </button>
               <button
-                className="px-6 py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
+                className="px-6 py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium cursor-pointer"
                 onClick={() => {
                   setPendingVideo(null);
                   setIsConfirming(false);
