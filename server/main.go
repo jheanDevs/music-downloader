@@ -46,8 +46,14 @@ func (w *DownloadWorker) Start() {
 	go func() {
 		defer w.wg.Done()
 		for req := range w.requestChan {
-			// Criar diretório de downloads se não existir
-			downloadsDir := "downloads"
+			log.Printf("Iniciando download para URL: %s", req.URL)
+			// Usar o diretório de downloads do sistema
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				log.Printf("Erro ao obter diretório home: %v", err)
+				continue
+			}
+			downloadsDir := filepath.Join(homeDir, "Downloads")
 			if err := os.MkdirAll(downloadsDir, 0755); err != nil {
 				log.Printf("Erro ao criar diretório de downloads: %v", err)
 				continue
@@ -116,17 +122,43 @@ func (w *DownloadWorker) Start() {
 				continue
 			}
 
-			// Verificar se arquivo foi criado
-			if _, err := os.Stat(filePath); os.IsNotExist(err) {
-				log.Printf("Arquivo não foi criado: %v", err)
+			// Verificar se arquivo foi criado e seu tamanho
+			fileInfo, err := os.Stat(filePath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					w.progressChan <- DownloadProgress{
+						ID:       req.URL,
+						Progress: 0,
+						Status:   fmt.Sprintf("Erro: Arquivo não foi criado em %s", filePath),
+						FilePath: filePath,
+					}
+				} else {
+					w.progressChan <- DownloadProgress{
+						ID:       req.URL,
+						Progress: 0,
+						Status:   fmt.Sprintf("Erro ao verificar arquivo: %v", err),
+						FilePath: filePath,
+					}
+				}
 				continue
 			}
 
-			// Notificar conclusão
+			// Verificar se o arquivo tem conteúdo
+			if fileInfo.Size() == 0 {
+				w.progressChan <- DownloadProgress{
+					ID:       req.URL,
+					Progress: 0,
+					Status:   "Erro: Arquivo criado está vazio",
+					FilePath: filePath,
+				}
+				continue
+			}
+
+			// Notificar conclusão com sucesso
 			w.progressChan <- DownloadProgress{
 				ID:       req.URL,
 				Progress: 100,
-				Status:   fmt.Sprintf("Download concluído: %s", filePath),
+				Status:   fmt.Sprintf("Download concluído com sucesso: %s (%.2f MB)", filePath, float64(fileInfo.Size())/1024/1024),
 				FilePath: filePath,
 			}
 		}
@@ -176,6 +208,12 @@ func main() {
 	requestChan := make(chan DownloadRequest, 100)
 	progressChan := make(chan DownloadProgress, 100)
 	var wg sync.WaitGroup
+
+	// Criar diretório de downloads se não existir
+	downloadsDir := "downloads"
+	if err := os.MkdirAll(downloadsDir, 0755); err != nil {
+		log.Fatalf("Erro ao criar diretório de downloads: %v", err)
+	}
 
 	// Iniciar workers
 	numWorkers := 3

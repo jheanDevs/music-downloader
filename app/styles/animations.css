@@ -1,0 +1,50 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.download-options {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease-in-out;
+}
+
+.download-item:hover .download-options {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.quality-button {
+  @apply px-3 py-1 text-sm rounded-md transition-all duration-200;
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+  @apply dark:bg-blue-600 dark:hover:bg-blue-700;
+}
+
+.quality-button:not(:last-child) {
+  @apply mr-2;
+}
