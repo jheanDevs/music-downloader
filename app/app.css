@@ -13,3 +13,13 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Estilos globais para o toast */
+[data-sonner-toaster] {
+  @apply fixed inset-0 flex items-center justify-center z-50;
+  pointer-events: none;
+}
+
+[data-sonner-toast] {
+  @apply pointer-events-auto z-50;
+}
